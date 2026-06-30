@@ -6,7 +6,7 @@ using BayesPetroChron
 
 
 """
-    run_soft_ordering(obs_ages, obs_σ; σ_rim, T_min=50.0, T_max=300.0, Δ_max=200.0,
+    run_soft_ordering(obs_ages, obs_σ; σ_rim, T_min=50.0, T_max=250.0, Δ_max=100.0,
                        n_samples=3000, n_chains=4, target_accept=0.95)
 
 Sample the soft-ordered age-sequence model:
@@ -21,7 +21,7 @@ not hard-enforced, but a reversal (mnz or zrn older than grt rim) is penalised i
 The penalty is quadratic, so a reversal within ~1σ costs almost nothing, while one of several σ
 is strongly disfavoured.
 """
-function run_soft_ordering(obs_ages, obs_σ; σ_rim, T_min=50.0, T_max=300.0, Δ_max=200.0,
+function run_soft_ordering(obs_ages, obs_σ; σ_rim, T_min=50.0, T_max=250.0, Δ_max=100.0,
                             n_samples=3000, n_chains=4, target_accept=0.95)
 
     @model function age_sequence_soft(t_obs, σ_obs)

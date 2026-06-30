@@ -6,15 +6,15 @@ using BayesPetroChron
 
 
 """
-    run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=300.0, Δ_max=200.0,
-                         n_samples=3000, n_chains=4, target_accept=0.9)
+    run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=250.0, Δ_max=100.0,
+                         n_samples=3000, n_chains=4, target_accept=0.95)
 
 Sample the strictly ordered age-sequence model:
 grt_core (T1) ≥ grt_rim (T2) ≥ mnz (T3) ≥ zrn (T4) ≥ rt (T5)
 
 """
-function run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=300.0, Δ_max=200.0,
-                              n_samples=3000, n_chains=4, target_accept=0.9)
+function run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=250.0, Δ_max=100.0,
+                              n_samples=3000, n_chains=4, target_accept=0.95)
 
     @model function age_sequence(t_obs, σ_obs)
         T1  ~ Uniform(T_min, T_max)   # garnet core — oldest anchor
