@@ -39,6 +39,23 @@ function run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=300.0, Δ_max=2
     model = age_sequence(obs_ages, obs_σ)
     chain = sample(model, NUTS(target_accept), MCMCThreads(), n_samples, n_chains)
 
+    # Sample prior (oversample, 500k), then filter to keep only draws with T5 ≥ T_min
+    chain_prior = sample(model, Prior(), 500_000)
+
+    T1_prior  = vec(chain_prior[:T1])
+    Δ12_prior = vec(chain_prior[:Δ12])
+    Δ23_prior = vec(chain_prior[:Δ23])
+    Δ34_prior = vec(chain_prior[:Δ34])
+    Δ45_prior = vec(chain_prior[:Δ45])
+
+    T2_prior = T1_prior .- Δ12_prior
+    T3_prior = T2_prior .- Δ23_prior
+    T4_prior = T3_prior .- Δ34_prior
+    T5_prior = T4_prior .- Δ45_prior
+
+    valid = T5_prior .>= T_min
+    prior_vec = [T1_prior[valid], T2_prior[valid], T3_prior[valid], T4_prior[valid], T5_prior[valid]]
+
     # Recalculate posterior ages
     T1_samp  = vec(chain[:T1])
     Δ12_samp = vec(chain[:Δ12])
@@ -76,7 +93,7 @@ function run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=300.0, Δ_max=2
     param_names  = [:T1, :Δ12, :Δ23, :Δ34, :Δ45]
     param_labels = ["T₁ (core)", "Δ₁₂", "Δ₂₃", "Δ₃₄", "Δ₄₅"]
 
-    return (; chain, post_samps, dur_samps, post_vec, post_mat,
+    return (; chain, chain_prior, post_samps, dur_samps, post_vec, post_mat, prior_vec,
               param_names, param_labels, n_chains)
 end
 
