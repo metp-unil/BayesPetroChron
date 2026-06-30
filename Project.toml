@@ -1,0 +1,28 @@
+name = "BayesPetroChron"
+uuid = "b50b1034-f796-43e8-ac9d-59bc692d857b"
+version = "0.1.0"
+authors = ["Philipsite <philip.hartmeier@hotmail.com>"]
+
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+FlexiChains = "4a37a8b9-6e57-4b92-8664-298d46e639f7"
+KernelDensity = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
+MCMCChains = "c7f686f2-ff18-58e9-bc7b-31028e88f75d"
+MCMCDiagnosticTools = "be115224-59cd-429b-ad48-344e309966f0"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
+Turing = "fce5fe82-541a-59a6-adf8-730c64b5f9a0"
+
+[compat]
+CairoMakie = "0.15.12"
+Distributions = "0.25.129"
+FlexiChains = "0.6.19"
+KernelDensity = "0.6.12"
+MCMCChains = "7.7.0"
+MCMCDiagnosticTools = "0.3.19"
+Random = "1.11.0"
+Statistics = "1.11.1"
+StatsPlots = "0.15.8"
+Turing = "0.45.0"
