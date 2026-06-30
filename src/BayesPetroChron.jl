@@ -5,9 +5,12 @@ using KernelDensity
 using Distributions
 using Statistics
 using MCMCDiagnosticTools
+using JLD2
 
-export diagnostics_fig, meas_v_model_age_fig
-
+include("caching.jl")
 include("plotting.jl")
+
+export cached_run
+export diagnostics_fig, meas_v_model_age_fig
 
 end

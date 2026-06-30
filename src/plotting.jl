@@ -47,7 +47,7 @@ function ess_rhat_summary(mat)
 end
 
 """
-    diagnostics_fig(chain; labels, obs_ages, obs_σ, post_vec, post_mat,
+    diagnostics_fig(chain; min_labels, obs_ages, obs_σ, post_vec, post_mat,
                      param_names, param_labels, n_chains)
 
 3-row diagnostic figure:
@@ -67,7 +67,7 @@ end
 (iteration × chain) arrays rather than flattened vectors, so ESS/R̂ can be
 computed correctly (flattening loses the per-chain structure needed for that).
 """
-function diagnostics_fig(chain; labels, obs_ages, obs_σ, post_vec, post_mat,
+function diagnostics_fig(chain; min_labels, obs_ages, obs_σ, post_vec, post_mat,
                           param_names, param_labels, n_chains)
     col_obs      = (:steelblue, 0.8)
     col_post     = (:firebrick, 0.85)
@@ -129,7 +129,7 @@ function diagnostics_fig(chain; labels, obs_ages, obs_σ, post_vec, post_mat,
     # ── Row 3: Measurement vs. posterior, ESS as in-panel text ──────────
     meas_row = 3 + n_params
     axes_age = []
-    for (col, (label, μ, σ, samps, mat)) in enumerate(zip(labels, obs_ages, obs_σ, post_vec, post_mat))
+    for (col, (label, μ, σ, samps, mat)) in enumerate(zip(min_labels, obs_ages, obs_σ, post_vec, post_mat))
         s = ess_rhat_summary(mat)
 
         ax = Axis(fig[meas_row, col],
@@ -162,12 +162,12 @@ function diagnostics_fig(chain; labels, obs_ages, obs_σ, post_vec, post_mat,
 end
 
 """
-    meas_v_model_age_fig(; labels, colors, obs_ages, obs_σ, post_vec)
+    meas_v_model_age_fig(; min_labels, colors, obs_ages, obs_σ, post_vec)
 
 Two-panel figure comparing measured age PDFs (left) against posterior age
 PDFs (right), one curve per domain, with shared x-axis.
 """
-function meas_v_model_age_fig(; labels, colors, obs_ages, obs_σ, post_vec)
+function meas_v_model_age_fig(; min_labels, colors, obs_ages, obs_σ, post_vec)
     fig_compare = Figure(size=(1100, 500))
 
     ax_meas = Axis(fig_compare[1, 1],
@@ -175,7 +175,7 @@ function meas_v_model_age_fig(; labels, colors, obs_ages, obs_σ, post_vec)
                    xlabel = "Age (Ma)",
                    ylabel = "Density")
 
-    for (label, μ, σ, color) in zip(labels, obs_ages, obs_σ, colors)
+    for (label, μ, σ, color) in zip(min_labels, obs_ages, obs_σ, colors)
         xs, ys = normal_curve(μ, σ)
         lines!(ax_meas, xs, ys; color=color, linewidth=2.5, label="$label ($(μ) ± $(σ) Ma)")
         band!(ax_meas, xs, zeros(length(xs)), ys; color=(color, 0.2))
@@ -188,7 +188,7 @@ function meas_v_model_age_fig(; labels, colors, obs_ages, obs_σ, post_vec)
                    xlabel = "Age (Ma)",
                    ylabel = "")
 
-    for (label, samps, color) in zip(labels, post_vec, colors)
+    for (label, samps, color) in zip(min_labels, post_vec, colors)
         xs, ys = kde_curve(samps)
         lines!(ax_post, xs, ys; color=color, linewidth=2.5,
                label="$label (median=$(round(median(samps), digits=1)) Ma)")
