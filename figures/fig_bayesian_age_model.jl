@@ -130,3 +130,4 @@ ax_tectrate.xticks = LinearTicks(6)
 axislegend(ax_tectrate; position=:lt, framevisible=false, labelsize=10, orientation=:vertical)
 
 fig
+save(joinpath(@__DIR__, "..", "figures", "bayesian_age_model.pdf"), fig)

@@ -122,3 +122,5 @@ linkyaxes!(ax_meas, ax_meas_RG03)
 linkyaxes!(ax_model, ax_model_RG03)
 
 fig
+
+save(joinpath(@__DIR__, "..", "figures", "compare_samples.pdf"), fig)

@@ -72,3 +72,5 @@ linkxaxes!(row_axes[1][1], row_axes[2][1], row_axes[3][1])
 linkxaxes!(row_axes[2][2], row_axes[3][2])
 
 fig
+
+save(joinpath(@__DIR__, "..", "figures", "compare_age_models.pdf"), fig)
