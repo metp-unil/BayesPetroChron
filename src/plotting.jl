@@ -13,8 +13,8 @@ mm_to_px(mm, dpi=FIGURE_DPI) = round(Int, mm * (1/25.4) * dpi)
 Evaluate a kernel density estimate of `samples` over an `npoints`-point grid,
 returning `(xs, ys)` for plotting.
 """
-function kde_curve(samples; npoints=400)
-    k  = kde(samples)
+function kde_curve(samples; npoints=400, boundary=nothing)
+    k  = isnothing(boundary) ? kde(samples) : kde(samples, boundary=boundary)
     xs = range(minimum(k.x), maximum(k.x), length=npoints)
     ys = pdf(k, collect(xs))
     return collect(xs), ys
@@ -202,4 +202,44 @@ function meas_v_model_age_fig(; min_labels, colors, obs_ages, obs_σ, post_vec)
     Label(fig_compare[0, :], "Measured vs. Posterior Age Distributions", fontsize=16, font=:bold)
 
     return fig_compare
+end
+
+"""
+    add_ci_bars!(ax, samples_vec, colors; y_pos, central=:median,
+                  ci=(0.025, 0.975), dodge_gap=0.02, linewidth=3,
+                  markersize=12, whiskerwidth=10)
+
+Overlay horizontal CI bars on `ax` for each vector in `samples_vec`, positioned
+around `y_pos` with vertical dodging so bars for different variables don't
+overlap. A diamond marker shows the central estimate on each bar.
+
+`y_pos` controls placement — set above or below the density curves as needed.
+`central` is `:median` or `:mode` (mode is found as the KDE peak).
+`ci` is the lower/upper quantile pair, defaulting to 95%.
+"""
+function add_ci_bars!(ax, samples_vec, colors; y_pos,
+                       central=:median, ci=(0.025, 0.975),
+                       dodge_gap=0.05, linewidth=3,
+                       markersize=12)
+    n       = length(samples_vec)
+    offsets = n > 1 ? collect(range(-(n-1)/2, (n-1)/2, length=n)) .* dodge_gap : [0.0]
+
+    for (samps, color, offset) in zip(samples_vec, colors, offsets)
+        y  = y_pos + offset
+        lo = quantile(samps, ci[1])
+        hi = quantile(samps, ci[2])
+
+        cval = if central == :median
+            median(samps)
+        else
+            xs, ys = kde_curve(samps)
+            xs[argmax(ys)]
+        end
+
+        rangebars!(ax, [y], [lo], [hi];
+                   direction=:x, color=color,
+                   linewidth=linewidth)
+        scatter!(ax, [cval], [y];
+                 color=color, marker=:diamond, markersize=markersize)
+    end
 end
