@@ -1,6 +1,52 @@
 const FIGURE_DPI = 72
 
 """
+    print_results(results, min_labels; to_file=nothing)
+
+Print a formatted summary table of posterior age statistics for each mineral phase.
+Columns: Median, Mode (KDE peak), MAD (median absolute deviation), 95% CI.
+
+Pass a file path to `to_file` to additionally write the output to a text file.
+"""
+function print_results(results, min_labels; to_file=nothing)
+    header = rpad("Mineral", 16) *
+             lpad("Median", 8)   *
+             lpad("Mode",   8)   *
+             lpad("MAD",    8)   *
+             lpad("95% CI", 22)
+    rule   = "─" ^ length(header)
+
+    rows = String[]
+    for (label, samps) in zip(min_labels, results.post_vec)
+        med      = median(samps)
+        xs, ys   = kde_curve(samps)
+        mode_val = xs[argmax(ys)]
+        mad_val  = median(abs.(samps .- med))
+        lo, hi   = quantile(samps, [0.025, 0.975])
+        ci_str   = "[$(round(lo, digits=1)), $(round(hi, digits=1))]"
+        push!(rows,
+            rpad(label, 16)                          *
+            lpad(string(round(med,      digits=1)), 8) *
+            lpad(string(round(mode_val, digits=1)), 8) *
+            lpad(string(round(mad_val,  digits=1)), 8) *
+            lpad(ci_str, 22))
+    end
+
+    title  = "Posterior age summaries [Ma]"
+    title_centered = lpad(title, div(length(header) + length(title), 2))
+    output = join([title_centered, "", header, rule, rows..., ""], "\n")
+    print(output)
+
+    if !isnothing(to_file)
+        open(to_file, "w") do io
+            write(io, output)
+        end
+        @info "Results written to $to_file"
+    end
+    return nothing
+end
+
+"""
     mm_to_px(mm, dpi=FIGURE_DPI)
 
 Convert mm to pixels at given DPI.

@@ -11,6 +11,6 @@ include("caching.jl")
 include("plotting.jl")
 
 export cached_run
-export diagnostics_fig, meas_v_model_age_fig
+export diagnostics_fig, meas_v_model_age_fig, print_results
 
 end
