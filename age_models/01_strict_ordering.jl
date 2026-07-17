@@ -98,6 +98,7 @@ function run_strict_ordering(obs_ages, obs_σ; T_min=50.0, T_max=250.0, Δ_max=1
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
+    using CairoMakie
 
     include("geochronolgy_data.jl")
 
@@ -133,5 +134,6 @@ if abspath(PROGRAM_FILE) == @__FILE__
     fig = diagnostics_fig(results.chain; min_labels, obs_ages, obs_σ,
                            results.post_vec, results.post_mat, results.param_names,
                            results.param_labels, results.n_chains)
-    display(fig)
+
+    save(joinpath(@__DIR__, "..", "figures", "bayesian_age_model_strict_ordering.pdf"), fig)
 end
