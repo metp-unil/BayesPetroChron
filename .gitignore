@@ -5,3 +5,7 @@ test_*
 results/
 
 *.pdf
+*.txt
+
+z_old*
+z_old*/
